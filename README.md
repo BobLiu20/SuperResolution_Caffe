@@ -32,10 +32,10 @@ And then following readme to build and install libdmtx. Also do python setup.py 
 ### Result compare
 
 * VDSR
-[[https://github.com/BobLiu20/SuperResolution_Caffe/tree/master/VDSR/result/original.jpg|alt=original]]
-[[https://github.com/BobLiu20/SuperResolution_Caffe/tree/master/VDSR/result/new.jpg|alt=new]]
+
+![original](VDSR/result/original.jpg?raw=true) VS ![new](VDSR/result/new.jpg?raw=true)
 
 * SRCNN
-[[https://github.com/BobLiu20/SuperResolution_Caffe/tree/master/SRCNN/result/original.jpg|alt=original]]
-[[https://github.com/BobLiu20/SuperResolution_Caffe/tree/master/SRCNN/result/new.jpg|alt=new]]
+
+![original](SRCNN/result/original.jpg) VS ![new](SRCNN/result/new.jpg)
 
