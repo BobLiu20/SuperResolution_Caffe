@@ -1,0 +1,124 @@
+name: "SRCNN"
+layer {
+  type: 'Python'
+  name: 'data'
+  top: 'data'
+  top: 'label'
+  # include {
+  #   phase: TRAIN
+  # }
+  python_param {
+    # the module name -- usually the filename -- that needs to be in $PYTHONPATH
+    module: 'srcnn_input_datalayer'
+    # the layer name -- the class name in the module
+    layer: 'ImageInputDataLayer'
+    # parameter
+    param_str: '{"batch_size":128, "im_shape":(100,100), "la_shape":(88,88)}'
+  }
+}
+layer {
+	name: "conv1"
+	type: "Convolution"
+	bottom: "data"
+	top: "conv1"
+	param {
+	    lr_mult: 1
+	}
+	param {
+	    lr_mult: 2
+	}
+	convolution_param {
+	    num_output: 64
+	    kernel_size: 9
+	    stride: 1
+		weight_filler {
+		    type: "gaussian"
+		    std: 0.4
+		}
+		bias_filler {
+		    type: "constant"
+		    value: 0
+		}
+	}
+}
+
+layer {
+	name: "relu1"
+	type: "ReLU"
+	bottom: "conv1"
+	top: "conv1"
+}
+
+layer {
+	name: "conv2"
+	type: "Convolution"
+	bottom: "conv1"
+	top: "conv2"
+	param {
+	    lr_mult: 1
+	}
+	param {
+	    lr_mult: 2
+	}
+	convolution_param {
+		num_output: 32
+		kernel_size: 1
+		stride: 1
+		weight_filler {
+			type: "gaussian"
+			std: 0.01
+		}
+		bias_filler {
+			type: "constant"
+			value: 0
+		}
+	}
+}
+
+layer {
+	name: "relu2"
+	type: "ReLU"
+	bottom: "conv2"
+	top: "conv2"
+}
+
+layer {
+	name: "recon"
+	type: "Convolution"
+	bottom: "conv2"
+	top: "recon"
+	param {
+	    lr_mult: 0.1
+	}
+	param {
+	    lr_mult: 0.2
+	}
+	convolution_param {
+		num_output: 1
+		kernel_size: 5
+		stride: 1
+		weight_filler {
+			type: "gaussian"
+			std: 0.01
+		}
+		bias_filler {
+			type: "constant"
+			value: 0
+		}
+	}
+}
+
+layer {
+  name: "sigmoid1"
+  type: "Sigmoid"
+  bottom: "recon"
+  top: "recon"
+}
+
+layer {
+	name: "loss"
+	bottom: "recon"
+	bottom: "label"
+	top: "loss"
+	type: "EuclideanLoss"
+}
