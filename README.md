@@ -29,4 +29,13 @@ And then following readme to build and install libdmtx. Also do python setup.py 
     caffe train --solver=solver.prototxt --gpu=0
 ```
 
+### Result compare
+
+* VDSR
+[[https://github.com/BobLiu20/SuperResolution_Caffe/tree/master/VDSR/result/original.jpg|alt=original]]
+[[https://github.com/BobLiu20/SuperResolution_Caffe/tree/master/VDSR/result/new.jpg|alt=new]]
+
+* SRCNN
+[[https://github.com/BobLiu20/SuperResolution_Caffe/tree/master/SRCNN/result/original.jpg|alt=original]]
+[[https://github.com/BobLiu20/SuperResolution_Caffe/tree/master/SRCNN/result/new.jpg|alt=new]]
 
