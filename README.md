@@ -10,6 +10,8 @@ All of this methods is implementation in caffe python.
 
 * FSRCNN (Accelerating the Super-Resolution Convolutional Neural Network) [[Web]](http://mmlab.ie.cuhk.edu.hk/projects/FSRCNN.html)
 
+* MY_SR was modified from VDSR and SRCNN. Better performance for this task.
+
 ### How to training in my code
 First of all. I use Super-Resolution to do data matrix reader (Enhance picture quality).
 My platform is Ubuntu 14.04 with pycaffe.
@@ -38,4 +40,8 @@ And then following readme to build and install libdmtx. Also do python setup.py 
 * SRCNN
 
 ![original](SRCNN/result/original.jpg) VS ![new](SRCNN/result/new.jpg)
+
+* MY_SR
+
+![original](MY_SR/result/original.jpg) VS ![new](MY_SR/result/new.jpg)
 

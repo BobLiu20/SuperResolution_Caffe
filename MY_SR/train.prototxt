@@ -1,0 +1,253 @@
+name: "VDSRCNN"
+layer {
+  type: 'Python'
+  name: 'data'
+  top: 'data'
+  top: 'label'
+  include {
+    phase: TRAIN
+  }
+  python_param {
+    # the module name -- usually the filename -- that needs to be in $PYTHONPATH
+    module: 'aoi_srcnn_input_datalayer'
+    # the layer name -- the class name in the module
+    layer: 'ImageInputDataLayer'
+    # parameter
+    param_str: '{"batch_size":64, "im_shape":(112,112), "la_shape":(100,100)}'
+  }
+}
+
+layer {
+  type: 'Python'
+  name: 'data'
+  top: 'data'
+  top: 'label'
+  include {
+    phase: TEST
+  }
+  python_param {
+    # the module name -- usually the filename -- that needs to be in $PYTHONPATH
+    module: 'aoi_srcnn_input_datalayer'
+    # the layer name -- the class name in the module
+    layer: 'ImageInputDataLayer'
+    # parameter
+    param_str: '{"batch_size":1, "im_shape":(112,112), "la_shape":(100,100)}'
+  }
+}
+
+layer {
+	name: "pre_conv1"
+	type: "Convolution"
+	bottom: "data"
+	top: "pre_conv1"
+	param {
+	    lr_mult: 1
+	}
+	param {
+	    lr_mult: 2
+	}
+	convolution_param {
+	    num_output: 64
+	    kernel_size: 9
+	    stride: 1
+		weight_filler {
+		    type: "gaussian"
+		    std: 0.4
+		}
+		bias_filler {
+		    type: "constant"
+		    value: 0
+		}
+	}
+}
+
+layer {
+	name: "pre_relu1"
+	type: "ReLU"
+	bottom: "pre_conv1"
+	top: "pre_conv1"
+}
+
+layer {
+	name: "pre_conv2"
+	type: "Convolution"
+	bottom: "pre_conv1"
+	top: "pre_conv2"
+	param {
+	    lr_mult: 1
+	}
+	param {
+	    lr_mult: 2
+	}
+	convolution_param {
+		num_output: 32
+		kernel_size: 1
+		stride: 1
+		weight_filler {
+			type: "gaussian"
+			std: 0.01
+		}
+		bias_filler {
+			type: "constant"
+			value: 0
+		}
+	}
+}
+
+layer {
+	name: "pre_relu2"
+	type: "ReLU"
+	bottom: "pre_conv2"
+	top: "pre_conv2"
+}
+
+layer {
+	name: "pre_recon"
+	type: "Convolution"
+	bottom: "pre_conv2"
+	top: "pre_recon"
+	param {
+	    lr_mult: 0.1
+	}
+	param {
+	    lr_mult: 0.2
+	}
+	convolution_param {
+		num_output: 1
+		kernel_size: 5
+		stride: 1
+		weight_filler {
+			type: "gaussian"
+			std: 0.01
+		}
+		bias_filler {
+			type: "constant"
+			value: 0
+		}
+	}
+}
+
+layer {
+  name: "pre_sigmoid1"
+  type: "Sigmoid"
+  bottom: "pre_recon"
+  top: "pre_recon_out"
+}
+
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "pre_recon_out"
+  top: "conv1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 0.1
+  }
+  convolution_param {
+    num_output: 64
+    kernel_size: 3
+    stride: 1
+    pad: 1
+    weight_filler {
+      type: "msra"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "conv1"
+  top: "conv1"
+}
+
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "conv1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 0.1
+  }
+  convolution_param {
+    num_output: 64
+    kernel_size: 3
+    stride: 1
+    pad: 1
+    weight_filler {
+      type: "msra"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+layer {
+  name: "relu2"
+  type: "ReLU"
+  bottom: "conv2"
+  top: "conv2"
+}
+
+layer {
+  name: "conv3"
+  type: "Convolution"
+  bottom: "conv2"
+  top: "conv3"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 0.1
+  }
+  convolution_param {
+    num_output: 1
+    kernel_size: 3
+    stride: 1
+    pad: 1
+    weight_filler {
+      type: "msra"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+layer {
+	name: "sum"
+	type: "Eltwise"
+	bottom: "pre_recon_out"
+	bottom: "conv3"
+	top: "sum"
+	propagate_down:false
+	propagate_down:true
+	eltwise_param {
+	  operation: 1
+	}
+}
+
+layer {
+  name: "sigmoid2"
+  type: "Sigmoid"
+  bottom: "sum"
+  top: "sum"
+}
+
+layer {
+  name: "loss"
+  type: "EuclideanLoss"
+  bottom: "sum"
+  bottom: "label"
+  top: "loss"
+}
+
